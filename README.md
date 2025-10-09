@@ -23,9 +23,8 @@ Instruction tuning is crucial for aligning Large Language Models (LLMs), yet the
 ![train](assets/training_pipeline.png)
 
 ## 🎉 News
-[2025.10.xx] 📢📢 We release our dataset and checkpoint.
-
-[2025.10.10] 🚀🚀 Release the code of LM-mixup.
+- [x] 📢 Release dataset and checkpoint
+- [x] 🚀 Release code of **LM-mixup**
 
 ## 🤖 Install 
 1. Install the package
