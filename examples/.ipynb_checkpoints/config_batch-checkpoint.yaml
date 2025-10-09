@@ -1,0 +1,148 @@
+data:
+  train_files: data/qa_mixup/train_qa_merged.json
+  val_files: data/qa_mixup/test_qa_merged.json
+  prompt_key: merged
+  answer_key: output
+  image_key: images
+  video_key: videos
+  image_dir: null
+  video_fps: 2.0
+  max_prompt_length: 4096
+  max_response_length: 4096
+  rollout_batch_size: 512  # equivalent to verl's data.train_batch_size
+  mini_rollout_batch_size: null  # equivalent to verl's data.gen_batch_size
+  val_batch_size: 1024
+  format_prompt: ./examples/format_prompt/qa_mixup.jinja
+  override_chat_template: null
+  shuffle: true
+  seed: 1
+  min_pixels: 262144
+  max_pixels: 4194304
+  filter_overlong_prompts: false
+
+algorithm:
+  adv_estimator: grpo
+  disable_kl: false
+  use_kl_loss: true
+  kl_penalty: low_var_kl
+  kl_coef: 1.0e-2
+  online_filtering: false  # dapo filter groups
+  filter_key: overall
+  filter_low: 0.01
+  filter_high: 0.99
+
+worker:
+  actor:
+    global_batch_size: 16  # equivalent to verl's actor.ppo_mini_batch_size
+    micro_batch_size_per_device_for_update: 4  # equivalent to verl's actor.ppo_micro_batch_size_per_gpu
+    micro_batch_size_per_device_for_experience: 16  # equivalent to verl's rollout.log_prob_micro_batch_size_per_gpu
+    max_grad_norm: 1.0
+    padding_free: true
+    dynamic_batching: true
+    ulysses_size: 1
+    model:
+      model_path: /root/autodl-tmp/EasyR1/sft/sft_output/qwe1_5_cold_start_new/checkpoint-25000
+      enable_gradient_checkpointing: true
+      trust_remote_code: true
+      freeze_vision_tower: false
+    optim:
+      lr: 1.0e-6
+      weight_decay: 1.0e-2
+      strategy: adamw  # {adamw, adamw_bf16}
+      lr_warmup_ratio: 0.0
+    fsdp:
+      enable_full_shard: true
+      enable_cpu_offload: false
+      enable_rank0_init: true
+    offload:
+      offload_params: true  # true: more CPU memory; false: more GPU memory
+      offload_optimizer: true  # true: more CPU memory; false: more GPU memory
+
+  rollout:
+    n: 5
+    temperature: 1.0
+    top_p: 1.0
+    limit_images: 0
+    gpu_memory_utilization: 0.6
+    enforce_eager: false
+    enable_chunked_prefill: false
+    tensor_parallel_size: 1  # 1 GPU
+    disable_tqdm: false
+    val_override_config:
+      temperature: 0.6
+      top_p: 0.95
+      n: 1
+
+  ref:
+    fsdp:
+      enable_full_shard: true
+      enable_cpu_offload: true  # true: more CPU memory; false: more GPU memory
+      enable_rank0_init: true
+    offload:
+      offload_params: false
+
+  reward:
+    reward_type: batch  # 🚀 使用batch模式提升速度
+    reward_function: ./examples/reward_function/qa_mixup_local_batch.py:compute_score
+    # ===== 双GPU资源分配配置 =====
+    # 方案1：专用分配（当前配置）- 一个GPU训练，一个GPU做reward
+    num_cpus: 2     # reward worker的CPU核心数
+    num_gpus: 0.5   # reward model独占1个GPU
+    
+    # 其他可选方案（替换上面两行）：
+    # 方案2：动态共享 - num_cpus: 2, num_gpus: 0.5 
+    # 方案3：训练优先 - num_cpus: 1, num_gpus: 0.25
+    # 方案4：Reward优先 - num_cpus: 6, num_gpus: 1.5
+    reward_function_kwargs:
+      # Local reward model settings
+      use_local_reward_model: true
+      local_reward_model_path: /root/autodl-tmp/EasyR1/ckpt/Llama-3.1-8B-Instruct
+      local_reward_model_kwargs:
+        device_map: auto  # Ray会自动设置CUDA_VISIBLE_DEVICES
+        torch_dtype: float16
+        max_new_tokens: 512
+        temperature: 0.1
+        batch_size: 128  # 🚀 真正的batch inference批处理大小
+      
+      # 🔧 Model quantization settings (可选，节省GPU内存)
+      use_quantization: false  # 设置为true启用4-bit量化
+      quantization_config:
+        load_in_4bit: true
+        bnb_4bit_use_double_quant: true
+        bnb_4bit_quant_type: nf4
+        bnb_4bit_compute_dtype: bfloat16  # bfloat16, float16, or float32
+      
+      # Alignment and embedding models (可选)
+      alignment_model_path: /root/autodl-tmp/EasyR1/examples/reward_function/mlp_classifier.pt
+      embedding_model_path: /root/autodl-tmp/EasyR1/ckpt/bge-m3
+      # 🔧 Batch inference优化设置
+      batch_processing:
+        enable_memory_optimization: true  # 启用内存优化
+        gradient_checkpointing: true      # 使用梯度检查点节省内存
+        max_batch_tokens: 16384          # 每批最大token数限制
+      
+      # Reward weights
+      weights:
+        quality: 0.6
+        alignment: 0.3
+        format: 0.1
+
+trainer:
+  total_epochs: 1
+  max_steps: null
+  project_name: easy_r1
+  experiment_name: qwen2_5_7b_math_grpo_batch  # 🔧 更新实验名称以区分batch模式
+  logger: ["console"]       #["console", "wandb"]
+  nnodes: 1
+  n_gpus_per_node: 1
+  max_try_make_batch: 20  # -1 means no limit
+  val_freq: -1  # -1 to disable
+  val_before_train: true
+  val_only: false
+  val_generations_to_log: 3
+  save_freq: 5  # -1 to disable
+  save_limit: 1  # -1 to disable
+  save_model_only: false
+  save_checkpoint_path: null
+  load_checkpoint_path: null
+  find_last_checkpoint: true
