@@ -45,6 +45,10 @@ pip install flash-attn --no-build-isolation
 bash prepare_training_data.sh
 ```
 4. Download the embedding library for bayes rating ([lm_mixup_emb_lib.zip](https://drive.google.com/file/d/1VY5dOZ_nWhrkIoPfoH1fLrAaAKhYt3CX/view?usp=sharing)) and unzip it directly under the project root directory (LM-mixup/).
+```
+LM-mixup/
+ ├── emb_lib
+```
 5. Download eval data for OpenLLM benchmark.
 ```
 cd DS2
