@@ -18,3 +18,5 @@ docta.ai
 gradio>=3.50.2
 seaborn
 vllm==0.7.0
+huggingface_hub>=0.23.0
+huggingface-cli

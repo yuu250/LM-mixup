@@ -15,7 +15,7 @@ Instruction tuning is crucial for aligning Large Language Models (LLMs), yet the
 
 - **Task definition:** We introduce **Instruction Distillation**, a task that transforms sparse, incomplete, and low-quality inputs into an information-dense output. To support this, we build **MIXTURE**, a **144K-instance Wikipedia-based dataset** mapping multiple low-quality variants to high-quality targets.  
 
-- **LM-mixup:** We propose **LM-mixup**, initialized with cold-start pretraining and optimized via **GRPO-based reinforcement learning** using **multi-dimensional rewards** (quality, semantic alignment, format compliance), achieving **superior results on \dataset** over SFT and strong baselines.  
+- **LM-mixup:** We propose **LM-mixup**, initialized with cold-start pretraining and optimized via **GRPO-based reinforcement learning** using **multi-dimensional rewards** (quality, semantic alignment, format compliance), achieving **superior results on MIXTURE** over SFT and strong baselines.  
 
 - **Empirical findings:** Training on distilled data combined with original high-quality data—only **≈3% of the full dataset**—**matches or surpasses full-dataset training** and advanced data selection methods, proving the **value of low-quality data after distillation**.  
 
@@ -23,8 +23,9 @@ Instruction tuning is crucial for aligning Large Language Models (LLMs), yet the
 ![train](assets/training_pipeline.png)
 
 ## 🎉 News
-- [ ] 📢 Release dataset and checkpoint
-- [x] 🚀 Release code of **LM-mixup**
+- [ ] 📦 Release *LM-mixup* checkpoints.
+- [x] 📢 Release [**MIXTURE**](https://huggingface.co/datasets/dokiik/MIXTURE) dataset.
+- [x] 🚀 Release code of **LM-mixup**.
 
 ## 🤖 Install 
 1. Install the package
@@ -39,8 +40,11 @@ pip install -r requirements.txt
 pip install -e ".[train]"
 pip install flash-attn --no-build-isolation
 ```
-3. Install the LM-mixup checkpoint and MIXTURE.
-4. Download embedding library for bayes rating.
+3. Install the and MIXTURE dataset.
+```
+bash prepare_training_data.sh
+```
+4. Download the embedding library for bayes rating ([lm_mixup_emb_lib.zip](https://drive.google.com/file/d/1VY5dOZ_nWhrkIoPfoH1fLrAaAKhYt3CX/view?usp=sharing)) and unzip it directly under the project root directory (LM-mixup/).
 5. Download eval data for OpenLLM benchmark.
 ```
 cd DS2
@@ -144,7 +148,12 @@ Download the full [**data pool**](https://huggingface.co/datasets/jlpang888/tulu
 ```bash
 python gpt_rating.py
 ```
-Alternatively, you can use our pre-rated dataset provided in `data_process/data`.  
+Alternatively, you can use our pre-rated dataset provided [here](https://drive.google.com/file/d/1h_WbnlmNOWUeKiW1mjFiKev70cLMwzyX/view?usp=share_link), and place it under data_process/data/ in the project root.
+```
+LM-mixup/
+ ├── data_process/
+ │   ├── data
+```
 Samples with GPT scores (1–5 scale) **≥ 4** are labeled as *high-quality*, while those **< 4** are *low-quality*.  The data is further divided into multiple subsets based on their source.
 
 ---
