@@ -23,7 +23,7 @@ Instruction tuning is crucial for aligning Large Language Models (LLMs), yet the
 ![train](assets/training_pipeline.png)
 
 ## 🎉 News
-- [x] 📢 Release dataset and checkpoint
+- [ ] 📢 Release dataset and checkpoint
 - [x] 🚀 Release code of **LM-mixup**
 
 ## 🤖 Install 
@@ -41,6 +41,11 @@ pip install flash-attn --no-build-isolation
 ```
 3. Install the LM-mixup checkpoint and MIXTURE.
 4. Download embedding library for bayes rating.
+5. Download eval data for OpenLLM benchmark.
+```
+cd DS2
+bash model_finetune/prepare_eval_data.sh
+```
 ## ⚙️ Training Pipeline
 
 Before running GRPO training, we first perform a **Cold Start** stage.
