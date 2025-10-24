@@ -1,8 +1,20 @@
 <div align=center>
 </div> 
 <h2 align="center">
-<a href="">LM-mixup: Text Data Augmentation via Language Model based Mixup
+<a href="https://arxiv.org/abs/2510.20449">LM-mixup: Text Data Augmentation via Language Model based Mixup
 </a></h2>
+
+</h5>
+
+<h5 align=center>
+
+[![Hugging Face MIXTURE](https://img.shields.io/badge/Hugging%20Face-MIXTURE-orange?style=flat&logo=huggingface&logoColor=white)](https://huggingface.co/datasets/dokiik/MIXTURE)
+[![arXiv](https://img.shields.io/badge/Arxiv-2510.20449-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/2510.20449)
+</h5>
+
+<div align="center">
+
+</div>
 
 ## Abstract
 Instruction tuning is crucial for aligning Large Language Models (LLMs), yet the quality of instruction-following data varies significantly. While high-quality data is paramount, it is often scarce; conversely, abundant low-quality data is frequently discarded, leading to substantial information loss. Existing data augmentation methods struggle to augment this low-quality data effectively, and the evaluation of such techniques remains poorly defined. To address this, we formally define the task of *Instruction Distillation*: distilling multiple low-quality and redundant inputs into high-quality and coherent instruction-output pairs. Specifically, we introduce a comprehensive data construction pipeline to create **MIXTURE**, a 144K-sample dataset pairing low-quality or semantically redundant imperfect instruction clusters with their high-quality distillations. We then introduce *LM-Mixup*, by first performing supervised fine-tuning on **MIXTURE** and then optimizing it with reinforcement learning. This process uses three complementary reward signals: quality, semantic alignment, and format compliance, via Group Relative Policy Optimization (GRPO). We demonstrate that *LM-Mixup* effectively augments imperfect datasets: fine-tuning LLMs on its distilled data, which accounts for only about 3% of the entire dataset, not only surpasses full-dataset training but also competes with state-of-the-art high-quality data selection methods across multiple benchmarks. Our work establishes that low-quality data is a valuable resource when properly distilled and augmented with *LM-Mixup*, significantly enhancing the efficiency and performance of instruction-tuned LLMs.
