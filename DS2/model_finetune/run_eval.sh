@@ -18,6 +18,7 @@ RUN_TAG="run_$(date +%Y%m%d_%H%M%S)"
 DATA_ROOT="DS2/eval"
 USE_VLLM="false"
 GPU_ID="0"
+DEBUG_MODE="false"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -33,6 +34,8 @@ while [[ $# -gt 0 ]]; do
       USE_VLLM="$2"; shift 2;;
     --gpu)
       GPU_ID="$2"; shift 2;;
+    --debug)
+      DEBUG_MODE="true"; shift 1;;
     *)
       echo "Unknown arg: $1"; exit 1;;
   esac
@@ -53,9 +56,18 @@ echo "TOKENIZER_PATH    : ${TOKENIZER_PATH}"
 echo "RUN_TAG           : ${RUN_TAG}"
 echo "DATA_ROOT         : ${DATA_ROOT}"
 echo "USE_VLLM          : ${USE_VLLM}"
+echo "DEBUG_MODE        : ${DEBUG_MODE}"
 echo "================================="
 
 export CUDA_VISIBLE_DEVICES="${GPU_ID}"
+
+# Optional debug enhancements
+if [[ "${DEBUG_MODE}" == "true" ]]; then
+  # Echo commands, enable Python faulthandler and default warnings
+  set -x
+  export PYTHONFAULTHANDLER=1
+  export PYTHONWARNINGS=default
+fi
 
 RESULT_ROOT="results/${RUN_TAG}"
 mkdir -p "${RESULT_ROOT}"

@@ -241,12 +241,78 @@ def main(args):
 
     print("Calculating F1, EM ...")
     metric = evaluate.load("squad")
-    
+
+    def _normalize_references(refs, lang_label=""):
+        """Normalize TyDiQA answers to the HF squad metric format.
+
+        Expected by `evaluate.load('squad')`:
+          references = [{
+            'id': str,
+            'answers': {'text': [str], 'answer_start': [int]}
+          }, ...]
+        """
+        normalized = []
+        for i, item in enumerate(refs):
+            ans = item.get("answers")
+            if isinstance(ans, dict) and "text" in ans and "answer_start" in ans:
+                normalized.append(item)
+                continue
+            if isinstance(ans, list):
+                try:
+                    texts = [a["text"] for a in ans]
+                    starts = [int(a["answer_start"]) for a in ans]
+                    normalized.append({"id": item["id"], "answers": {"text": texts, "answer_start": starts}})
+                except Exception as e:
+                    # Provide a compact but informative error sample
+                    raise ValueError(
+                        f"Invalid 'answers' structure in references for lang='{lang_label}', index={i}.\n"
+                        f"Sample item: {json.dumps(item)[:500]}\n"
+                        f"Normalization error: {e}"
+                    )
+            else:
+                raise ValueError(
+                    f"Unexpected 'answers' type ({type(ans)}) in references for lang='{lang_label}'.\n"
+                    f"Sample item: {json.dumps(item)[:500]}"
+                )
+        return normalized
+
     eval_scores = {}
     for lang in data_languages:
-        lang_predictions = [{"id": example["id"], "prediction_text": output} for example, output in zip(test_data, outputs) if example["lang"] == lang]
-        lang_references = [{"id": example["id"], "answers": example["answers"]} for example in test_data if example["lang"] == lang]
-        eval_scores[lang] = metric.compute(predictions=lang_predictions, references=lang_references)
+        lang_predictions = [
+            {"id": example["id"], "prediction_text": output}
+            for example, output in zip(test_data, outputs)
+            if example["lang"] == lang
+        ]
+        lang_references_raw = [
+            {"id": example["id"], "answers": example["answers"]}
+            for example in test_data
+            if example["lang"] == lang
+        ]
+
+        # Try to normalize references to the format expected by the squad metric.
+        try:
+            lang_references = _normalize_references(lang_references_raw, lang_label=lang)
+        except Exception as norm_err:
+            print("[TyDiQA] Reference normalization failed. Details:")
+            print(norm_err)
+            # Print a minimal preview to help debugging
+            if lang_references_raw:
+                print("[TyDiQA] First raw reference sample:")
+                print(json.dumps(lang_references_raw[0], ensure_ascii=False)[:800])
+            raise
+
+        try:
+            eval_scores[lang] = metric.compute(predictions=lang_predictions, references=lang_references)
+        except Exception as compute_err:
+            print("[TyDiQA] Metric computation failed. Debug context:")
+            print(f"lang={lang}, #pred={len(lang_predictions)}, #ref={len(lang_references)}")
+            if lang_predictions:
+                print("[TyDiQA] First prediction sample:")
+                print(json.dumps(lang_predictions[0], ensure_ascii=False))
+            if lang_references:
+                print("[TyDiQA] First normalized reference sample:")
+                print(json.dumps(lang_references[0], ensure_ascii=False))
+            raise
 
     print("Calculating recall ...")
     for lang in data_languages:
