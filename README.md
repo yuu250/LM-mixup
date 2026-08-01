@@ -272,3 +272,15 @@ python merge_mixup_with_original.py \
 ## Acknowledgement
 We are highly inspired by: [DS2](https://github.com/UCSC-REAL/DS2) and [EasyR1](https://github.com/hiyouga/EasyR1/tree/main).
 
+
+## Citation
+
+If you find our work useful, please consider citing our paper:
+
+```bibtex
+@article{deng2025lmmixup,
+  title   = {{LM-mixup}: Text Data Augmentation via Language Model-based Mixup},
+  author  = {Deng, Zhijie and Shen, Zhouan and Li, Ling and Zhou, Yao and Zhu, Zhaowei and He, Yanji and Wang, Wei and Wei, Jiaheng},
+  journal = {arXiv preprint arXiv:2510.20449},
+  year    = {2025}
+}
