@@ -112,7 +112,7 @@ cd sft
 Run inference with the trained model:
 ```bash
 python batch_infer_split.py \
-  --model_path EasyR1/checkpoints/easy_r1/qwen_mixup_1_5b_grpo/global_step_575/actor/huggingface \
+  --model_path EasyR1/checkpoints/easy_r1/qwen_mixup_1_5b_grpo/global_step_xxx/actor/huggingface \
   --test_json  /root/autodl-tmp/EasyR1/sft/data \
   --out_dir    infer_out/qwe_1_5_grpo \
   --out_prefix qwe_1_5_grpo_ \
@@ -204,7 +204,7 @@ python cluter2input.py \
 Run inference using the LM-Mixup model:
 ```bash
 python inference.py \
-    --model_path EasyR1/checkpoints/easy_r1/qwen_mixup_1_5b_grpo/global_step_575/actor/huggingface \
+    --model_path EasyR1/checkpoints/easy_r1/qwen_mixup_1_5b_grpo/global_step_xxx/actor/huggingface \
     --test_json  infer_in/dolly_low.jsonl \
     --out_jsonl   infer_out/dolly.jsonl \
     --batch_size 128 \
