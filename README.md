@@ -36,7 +36,7 @@ Instruction tuning is crucial for aligning Large Language Models (LLMs), yet the
 
 ## 🎉 News
 - [ ] 📦 Release *LM-mixup* checkpoints.
-- [ ] 🎉 Our paper has been accepted to **COLM 2026**!
+- [x] 🎉 Our paper has been accepted to **COLM 2026**!
 - [x] 📢 Release [**MIXTURE**](https://huggingface.co/datasets/dokiik/MIXTURE) dataset.
 - [x] 🚀 Release code of **LM-mixup**.
 
