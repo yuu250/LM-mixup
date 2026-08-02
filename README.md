@@ -6,10 +6,12 @@
 
 </h5>
 
-<h5 align=center>
+<h5 align="center">
 
 [![Hugging Face MIXTURE](https://img.shields.io/badge/Hugging%20Face-MIXTURE-orange?style=flat&logo=huggingface&logoColor=white)](https://huggingface.co/datasets/dokiik/MIXTURE)
-[![arXiv](https://img.shields.io/badge/Arxiv-2510.20449-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/2510.20449)
+[![Hugging Face Model](https://img.shields.io/badge/Hugging%20Face-LM--Mixup--1.5B-yellow?style=flat&logo=huggingface&logoColor=white)](https://huggingface.co/dokiik/LM-Mixup-1.5B)
+[![arXiv](https://img.shields.io/badge/arXiv-2510.20449-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/2510.20449)
+
 </h5>
 
 <div align="center">
@@ -35,7 +37,7 @@ Instruction tuning is crucial for aligning Large Language Models (LLMs), yet the
 ![train](assets/training_pipeline.png)
 
 ## 🎉 News
-- [ ] 📦 Release *LM-mixup* checkpoints.
+- [x] 📦 Release [*LM-mixup*](https://huggingface.co/dokiik/LM-Mixup-1.5B) checkpoints.
 - [x] 🎉 Our paper has been accepted to **COLM 2026**!
 - [x] 📢 Release [**MIXTURE**](https://huggingface.co/datasets/dokiik/MIXTURE) dataset.
 - [x] 🚀 Release code of **LM-mixup**.
